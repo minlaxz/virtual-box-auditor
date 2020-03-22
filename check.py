@@ -9,19 +9,19 @@ http://robotic-controls.com/learn/python-guis/basics-tkinter-gui
 
 """
 
-from tkinter import Tk, Frame, Canvas, Text, Label, Button 
+from tkinter import Tk, Frame, Canvas, Text, Label, Button, StringVar, OptionMenu, ttk, messagebox
 from tkinter.font import Font
 from datetime import datetime
 import time, os
 busy_flag = False
 
 root = Tk() 
-root.geometry("600x300") 
+root.geometry("700x400") 
 root.title("VM Control Panel") 
 root.configure(background='#d9d9d9')
 root.resizable(False,False)
 
-laxzFont = Font(family="Roboto", size=10, weight='bold')
+laxzFont = Font(family="Poppins", size=10, weight='bold')
 
 ### `widgets` :###############################################################
 #### >Left Frame
@@ -31,7 +31,7 @@ leftFrame.grid(row=0, column=0, padx=10, pady=2)                        ######
 rightFrame = Frame(root, width=150, height = 600)                       ######
 rightFrame.grid(row=0, column=1, padx=10, pady=2)                       ######
 #### >>Canvas for drawing circles
-circleCanvas = Canvas(rightFrame, width=100, height=100, bg='#d9d9d9')    ######
+circleCanvas = Canvas(rightFrame, width=100, height=100, bg='#d9d9d9')  ######
 circleCanvas.grid(row=1, column=0, padx=15, pady=2)                     ######
 #### >>Logging VM on/off status
 VMLog = Text(rightFrame, width = 60, height = 10, takefocus=0)          ######
@@ -42,8 +42,8 @@ firstLabel = Label(leftFrame, text="Operations", font=laxzFont)         ######
 firstLabel.grid(row=0, column=0, padx=10, pady=2)                       ######
 secondLabel = Label(rightFrame, text="Status History")                  ######
 secondLabel.grid(row=2, column=0, padx=10, pady=2)                      ######
-# thirdLabel = Label(rightFrame, text="Visual Status")                    ######
-# thirdLabel.grid(row=0, column=0, padx=10, pady=2)                       ######
+thirdLabel = Label(rightFrame, text="Developed by minlaxz", font=laxzFont)                  ######
+thirdLabel.grid(row=0, column=0, padx=10, pady=2)                     ######
 ##############################################################################
 
 def vmOnStateHandler(): 
@@ -116,6 +116,19 @@ def initHandler():
 def disable_event():
     VMLog.insert(0.2, "Quit Button overthere. :> \n")
 
+def getAllVMs():
+    oses = os.popen("VBoxManage list vms").read().strip()
+    u1 = oses[len(oses)-38:len(oses)]
+    pass
+
+def adios():
+    ans = messagebox.askokcancel("VM-C","The application will be closed")
+    if ans:
+        root.destroy()
+    else:
+        pass
+
+
 onButton = Button(leftFrame, text="VM On", command=vmOnStateHandler)
 onButton.grid(row=2, column=0, padx=5, pady=5)
 onButton.config( height=2, width=5 )
@@ -127,11 +140,20 @@ offButton.grid(row=3, column=0, padx=5, pady=5)
 offButton.config( height=2, width=5 )
 offButton.configure(background='#EB2A4B')
 
-quitButton = Button(leftFrame, text="Quit", command=root.destroy)   
+quitButton = Button(leftFrame, text="Quit", command=adios)   
 quitButton.grid(row=5, column=0, padx=5, pady=5)
 quitButton.config( height=2, width=5 )
 quitButton.configure(background='#FF7500')
 
+
+OPTIONS = ['foo', 'bar']
+myvar = StringVar(leftFrame)
+myvar.set(OPTIONS[0])
+option = OptionMenu(leftFrame, myvar, *OPTIONS)
+##option = ttk.Combobox(leftFrame, values=OPTIONS)
+##option.set(OPTIONS[0])
+option.grid(row=6,column=0, padx=5, pady=5)
+option.configure(height=1, width=3, background='#ABCBEF')
 initHandler()
 root.protocol("WM_DELETE_WINDOW", disable_event)
 root.mainloop() #loop to update GUI
